@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocFlow DMS — PCG </title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F2EE;--surf:#FFF;--surf2:#F9F8F5;
+  --bdr:#E5E0D8;--bdr2:#D0C9BE;
+  --txt:#1A1714;--txt2:#6B6459;--txt3:#A39B8F;
+  --acc:#C8522A;--acc2:#A83E18;--acc-bg:#FBF0EB;
+  --blue:#2A5FA8;--blue-bg:#EBF1FA;
+  --green:#2A7A4B;--green-bg:#EBF5EF;
+  --amber:#A06B0E;--amber-bg:#FBF3E3;
+  --red:#B83535;--red-bg:#FAEAEA;
+  --purple:#6B45A8;--purple-bg:#F2EDFB;
+  --teal:#1A7A73;--teal-bg:#E8F5F4;
+  --sidebar:230px;--topbar:54px;
+  --fd:'Syne',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+  --sh:0 1px 3px rgba(26,23,20,.07),0 4px 12px rgba(26,23,20,.04);
+  --sh2:0 8px 32px rgba(26,23,20,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{background:var(--bg);color:var(--txt);font-family:var(--fb);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px}
+
+/* LOGIN */
+.login{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+@media(max-width:720px){.login{grid-template-columns:1fr}.login-brand{display:none}}
+.login-brand{background:var(--txt);padding:3rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.login-brand::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:var(--acc);opacity:.12}
+.login-brand::after{content:'';position:absolute;bottom:-60px;left:40px;width:200px;height:200px;border-radius:50%;background:var(--blue);opacity:.1}
+.lb-logo{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.lb-icon{width:42px;height:42px;background:var(--acc);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:17px;color:#fff}
+.lb-name{font-family:var(--fd);font-size:21px;font-weight:700;color:#fff}
+.lb-tag{font-size:11px;color:rgba(255,255,255,.4)}
+.lb-headline{font-family:var(--fd);font-size:34px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:.8rem;position:relative;z-index:1}
+.lb-headline span{color:var(--acc)}
+.lb-desc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.7;max-width:320px;position:relative;z-index:1}
+.lb-feats{display:flex;flex-direction:column;gap:9px;position:relative;z-index:1}
+.lb-feat{display:flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.6)}
+.lb-dot{width:5px;height:5px;border-radius:50%;background:var(--acc);flex-shrink:0}
+.lf-wrap{padding:3rem;display:flex;align-items:center;justify-content:center;background:var(--surf)}
+.lf-inner{width:100%;max-width:380px}
+.lf-title{font-family:var(--fd);font-size:26px;font-weight:700;margin-bottom:4px}
+.lf-sub{font-size:13px;color:var(--txt2);margin-bottom:1.8rem}
+.fg{margin-bottom:.9rem}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--txt2);letter-spacing:.4px;margin-bottom:5px}
+.fi{width:100%;padding:10px 13px;background:var(--surf);border:1px solid var(--bdr);border-radius:7px;font-family:var(--fb);font-size:14px;color:var(--txt);outline:none;transition:border .15s;appearance:none}
+.fi:focus{border-color:var(--acc)}
+.fi-sm{padding:7px 11px;font-size:12px}
+.lerr{background:var(--red-bg);border:1px solid rgba(184,53,53,.2);border-radius:7px;padding:9px 13px;font-size:13px;color:var(--red);margin-bottom:.9rem}
+.btn-login{width:100%;padding:11px;background:var(--acc);border:none;border-radius:7px;font-family:var(--fd);font-size:14px;font-weight:600;color:#fff;cursor:pointer;letter-spacing:.3px;transition:background .15s}
+.btn-login:hover{background:var(--acc2)}
+
+/* SHELL */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--surf);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;overflow-y:auto}
+.sb-hd{padding:16px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px}
+.sb-logo{width:30px;height:30px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:12px;color:#fff}
+.sb-name{font-family:var(--fd);font-size:15px;font-weight:700}
+.sb-tag{font-size:10px;color:var(--txt3)}
+.sb-nav{flex:1;padding:10px 8px}
+.nav-lbl{font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:.8px;padding:0 9px;margin:10px 0 5px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;font-size:13px;font-weight:500;color:var(--txt2);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:var(--fb)}
+.nav-item:hover{background:var(--surf2);color:var(--txt)}
+.nav-item.active{background:var(--acc-bg);color:var(--acc);font-weight:600}
+.nav-ic{font-size:14px;width:17px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;padding:1px 7px;background:var(--acc);color:#fff;border-radius:10px;font-size:10px;font-weight:700}
+.sb-ft{padding:12px;border-top:1px solid var(--bdr)}
+.u-card{display:flex;align-items:center;gap:9px;padding:8px;background:var(--surf2);border-radius:7px;margin-bottom:8px}
+.u-av{width:30px;height:30px;border-radius:50%;background:var(--acc-bg);color:var(--acc);font-family:var(--fd);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.u-name{font-size:12px;font-weight:600}
+.u-role{font-size:10px;color:var(--txt3)}
+.btn-so{width:100%;padding:7px;background:transparent;border:1px solid var(--bdr);border-radius:6px;font-family:var(--fb);font-size:12px;color:var(--txt2);cursor:pointer;transition:all .15s}
+.btn-so:hover{border-color:var(--red);color:var(--red)}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--topbar);background:var(--surf);border-bottom:1px solid var(--bdr);padding:0 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.tb-title{font-family:var(--fd);font-size:16px;font-weight:700}
+.tb-right{display:flex;align-items:center;gap:9px}
+.pg{padding:22px;flex:1}
+
+/* COMPONENTS */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;margin-bottom:22px}
+.sc{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:16px;box-shadow:var(--sh)}
+.sc-lbl{font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.5px;margin-bottom:7px}
+.sc-val{font-family:var(--fd);font-size:26px;font-weight:800;line-height:1;margin-bottom:3px}
+.sc-sub{font-size:11px;color:var(--txt3)}
+.c-blue{color:var(--blue)}.c-green{color:var(--green)}.c-amber{color:var(--amber)}.c-red{color:var(--red)}.c-purple{color:var(--purple)}.c-acc{color:var(--acc)}.c-teal{color:var(--teal)}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;box-shadow:var(--sh);overflow:hidden;margin-bottom:14px}
+.card-hd{padding:14px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-title{font-family:var(--fd);font-size:14px;font-weight:700}
+.card-body{padding:18px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:var(--surf2)}
+th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.5px;border-bottom:1px solid var(--bdr);white-space:nowrap}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--surf2)}
+td{padding:11px 14px;border-bottom:1px solid var(--bdr);color:var(--txt2);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+td:first-child{color:var(--txt);font-weight:500}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.b-pending{background:var(--amber-bg);color:var(--amber)}
+.b-approved{background:var(--green-bg);color:var(--green)}
+.b-rejected{background:var(--red-bg);color:var(--red)}
+.b-invoice{background:var(--blue-bg);color:var(--blue)}
+.b-credit{background:var(--purple-bg);color:var(--purple)}
+.b-dupe{background:var(--red-bg);color:var(--red);border:1px solid rgba(184,53,53,.2)}
+.b-s1{background:var(--blue-bg);color:var(--blue)}
+.b-s2{background:var(--purple-bg);color:var(--purple)}
+.b-s3{background:var(--teal-bg);color:var(--teal)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid transparent;white-space:nowrap;background:transparent}
+.btn-fill{background:var(--acc);color:#fff;border-color:var(--acc)}
+.btn-fill:hover{background:var(--acc2)}
+.btn-ol{border-color:var(--bdr);color:var(--txt2)}
+.btn-ol:hover{border-color:var(--bdr2);color:var(--txt)}
+.btn-g{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-g:hover{background:#1e6038}
+.btn-r{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-r:hover{background:#902828}
+.btn-sm{padding:5px 11px;font-size:12px}
+.fbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.upload-zone{border:2px dashed var(--bdr2);border-radius:12px;padding:44px 28px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surf)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--acc);background:var(--acc-bg)}
+.uz-icon{font-size:38px;margin-bottom:12px;opacity:.5}
+.uz-title{font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:5px}
+.uz-sub{font-size:13px;color:var(--txt2)}
+.wf-track{display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--bdr)}
+.wf-s{flex:1;padding:13px 14px;text-align:center;border-right:1px solid var(--bdr);background:var(--surf2)}
+.wf-s:last-child{border-right:none}
+.wf-s.wf-done{background:var(--green-bg)}
+.wf-s.wf-active{background:var(--blue-bg)}
+.wf-s.wf-rej{background:var(--red-bg)}
+.wf-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 7px;font-family:var(--fd);font-size:12px;font-weight:700;background:var(--bdr);color:var(--txt3)}
+.wf-s.wf-done .wf-num{background:var(--green);color:#fff}
+.wf-s.wf-active .wf-num{background:var(--blue);color:#fff}
+.wf-s.wf-rej .wf-num{background:var(--red);color:#fff}
+.wf-st{font-size:12px;font-weight:600;margin-bottom:1px}
+.wf-sr{font-size:11px;color:var(--txt3)}
+.wf-sa{font-size:10px;color:var(--txt3);margin-top:3px}
+.mo{position:fixed;inset:0;background:rgba(26,23,20,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--surf);border-radius:16px;width:min(580px,100%);max-height:90vh;overflow-y:auto;box-shadow:var(--sh2)}
+.mo-hd{padding:18px 22px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.mo-title{font-family:var(--fd);font-size:16px;font-weight:700}
+.mo-x{width:28px;height:28px;border-radius:50%;border:none;background:var(--surf2);color:var(--txt2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mo-x:hover{background:var(--red-bg);color:var(--red)}
+.mo-body{padding:22px}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.di label{font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.4px;display:block;margin-bottom:3px}
+.di span{font-size:14px;font-weight:500}
+.ai-blk{background:linear-gradient(135deg,var(--blue-bg),var(--surf2));border:1px solid rgba(42,95,168,.15);border-radius:9px;padding:14px}
+.ai-lbl{font-size:9px;font-weight:700;color:var(--blue);letter-spacing:.7px;margin-bottom:7px}
+.ai-txt{font-size:13px;color:var(--txt2);line-height:1.7}
+.bar-chart{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:flex;align-items:center;gap:11px}
+.bar-lbl{width:130px;font-size:12px;color:var(--txt2);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:20px;background:var(--surf2);border-radius:4px;overflow:hidden;border:1px solid var(--bdr)}
+.bar-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.bar-val{width:75px;font-size:11px;color:var(--txt2);flex-shrink:0}
+.alert{padding:11px 14px;border-radius:9px;font-size:13px;margin-bottom:11px}
+.alert-warn{background:var(--red-bg);border:1px solid rgba(184,53,53,.2);color:var(--red)}
+.alert-info{background:var(--blue-bg);border:1px solid rgba(42,95,168,.15);color:var(--blue)}
+.uitem{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:15px 18px;margin-bottom:9px;box-shadow:var(--sh)}
+.uitem-hd{display:flex;align-items:center;gap:11px;margin-bottom:9px}
+.uprog{height:3px;background:var(--bdr);border-radius:2px;overflow:hidden}
+.uprog-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .25s}
+.rmc{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-bottom:18px}
+.rmc-card{background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;padding:13px}
+.rmc-lbl{font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.5px;margin-bottom:3px}
+.rmc-val{font-family:var(--fd);font-size:19px;font-weight:800}
+.ins-card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:18px;margin-bottom:13px;box-shadow:var(--sh)}
+.ins-hd{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.ins-ic{font-size:19px}
+.ins-title{font-family:var(--fd);font-size:14px;font-weight:700}
+.ins-tag{margin-left:auto;font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;letter-spacing:.5px}
+.tag-trend{background:var(--blue-bg);color:var(--blue)}
+.tag-anom{background:var(--red-bg);color:var(--red)}
+.tag-eff{background:var(--green-bg);color:var(--green)}
+.tag-risk{background:var(--amber-bg);color:var(--amber)}
+.empty-state{text-align:center;padding:48px 24px;color:var(--txt3)}
+.empty-state .es-icon{font-size:36px;opacity:.4;margin-bottom:12px}
+.empty-state h3{font-family:var(--fd);font-size:15px;color:var(--txt2);margin-bottom:6px}
+.empty-state p{font-size:13px;line-height:1.6}
+.access-denied{text-align:center;padding:48px}
+.access-denied h2{font-family:var(--fd);font-size:20px;color:var(--red);margin-bottom:8px}
+.access-denied p{color:var(--txt2);font-size:13px}
+.toast-wrap{position:fixed;bottom:22px;right:22px;z-index:300;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{padding:11px 16px;border-radius:9px;font-size:13px;max-width:320px;box-shadow:var(--sh2);color:#fff;animation:tin .3s ease}
+.t-ok{background:var(--green)}
+.t-err{background:var(--red)}
+.t-info{background:var(--blue)}
+@keyframes tin{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.hidden{display:none!important}
+.link{color:var(--acc);cursor:pointer;font-weight:600}
+.link:hover{text-decoration:underline}
+/* Upload form grid */
+.uf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+@media(max-width:600px){.uf-grid{grid-template-columns:1fr 1fr}.dgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login-screen" class="login">
+  <div class="login-brand">
+    <div class="lb-logo">
+      <div class="lb-icon">DF</div>
+      <div><div class="lb-name">DocFlow</div><div class="lb-tag">PCG | MindRift · Document Portal</div></div>
+    </div>
+    <div>
+      <div class="lb-headline">Smart document<br><span>workflow</span><br>for teams.</div>
+      <div class="lb-desc">AI-powered extraction, 3-step approval workflows, duplicate detection and real-time spend insights.</div>
+    </div>
+    <div class="lb-feats">
+      <div class="lb-feat"><div class="lb-dot"></div>Role-based authentication (5 roles)</div>
+      <div class="lb-feat"><div class="lb-dot"></div>AI document data extraction</div>
+      <div class="lb-feat"><div class="lb-dot"></div>3-step approval workflow engine</div>
+      <div class="lb-feat"><div class="lb-dot"></div>Duplicate invoice detection</div>
+      <div class="lb-feat"><div class="lb-dot"></div>Reports with PDF &amp; Excel export</div>
+      <div class="lb-feat"><div class="lb-dot"></div>AI-driven spend insights &amp; anomalies</div>
+    </div>
+  </div>
+  <div class="lf-wrap">
+    <div class="lf-inner">
+      <div class="lf-title">Sign in</div>
+      <div class="lf-sub">Enter your credentials to access the portal</div>
+      <div id="lerr" class="lerr hidden"></div>
+      <div class="fg"><label class="fl">EMAIL ADDRESS</label>
+        <input class="fi" type="email" id="l-email" placeholder="you@company.co.za" onkeyup="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="fg"><label class="fl">PASSWORD</label>
+        <input class="fi" type="password" id="l-pass" placeholder="••••••••" onkeyup="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="fg"><label class="fl">ROLE</label>
+        <select class="fi" id="l-role">
+          <option value="admin">Administrator</option>
+          <option value="reviewer">Reviewer</option>
+          <option value="manager">Manager</option>
+          <option value="finance">Finance / Admin</option>
+          <option value="viewer">Viewer (Read-only)</option>
+        </select>
+      </div>
+      <button class="btn-login" onclick="doLogin()">Sign in to DocFlow →</button>
+      <div style="margin-top:16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:12px">
+        <div style="font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.6px;margin-bottom:8px">TEST CREDENTIALS</div>
+        <div style="font-size:12px;color:var(--txt2);line-height:1.9">
+          admin@docflow.co.za / Admin@123<br>
+          reviewer@docflow.co.za / Review@123<br>
+          manager@docflow.co.za / Manage@123<br>
+          finance@docflow.co.za / Finance@123<br>
+          viewer@docflow.co.za / View@123
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP SHELL ===== -->
+<div id="app-shell" class="shell hidden">
+  <aside class="sidebar">
+    <div class="sb-hd">
+      <div class="sb-logo">DF</div>
+      <div><div class="sb-name">DocFlow</div><div class="sb-tag">PCG | MindRift</div></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-lbl">MAIN MENU</div>
+      <button class="nav-item active" id="ni-dashboard" onclick="showPage('dashboard')"><span class="nav-ic">📊</span>Dashboard</button>
+      <button class="nav-item" id="ni-upload" onclick="showPage('upload')"><span class="nav-ic">📤</span>Upload Documents</button>
+      <button class="nav-item" id="ni-documents" onclick="showPage('documents')"><span class="nav-ic">📁</span>Document Library</button>
+      <button class="nav-item" id="ni-workflow" onclick="showPage('workflow')">
+        <span class="nav-ic">✅</span>Approvals
+        <span class="nav-badge hidden" id="wf-badge">0</span>
+      </button>
+      <button class="nav-item" id="ni-reports" onclick="showPage('reports')"><span class="nav-ic">📈</span>Reports</button>
+      <button class="nav-item" id="ni-insights" onclick="showPage('insights')"><span class="nav-ic">🤖</span>AI Insights</button>
+    </nav>
+    <div class="sb-ft">
+      <div class="u-card">
+        <div class="u-av" id="sb-av">AU</div>
+        <div><div class="u-name" id="sb-name">—</div><div class="u-role" id="sb-role">—</div></div>
+      </div>
+      <button class="btn-so" onclick="doLogout()">Sign out</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="tb-title" id="tb-title">Dashboard</div>
+      <div class="tb-right">
+        <span class="badge b-invoice" id="tb-role-badge">—</span>
+        <span style="font-size:12px;color:var(--txt2)" id="tb-username">—</span>
+      </div>
+    </header>
+    <div class="pg">
+
+      <!-- DASHBOARD -->
+      <div id="pg-dashboard">
+        <div class="sgrid" id="dash-stats"></div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Recent Documents</div>
+            <button class="btn btn-ol btn-sm" onclick="showPage('documents')">View all →</button>
+          </div>
+          <div class="tw">
+            <table>
+              <thead><tr><th>Invoice #</th><th>Type</th><th>Vendor</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody id="dash-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOAD -->
+      <div id="pg-upload" class="hidden">
+        <div id="upload-denied" class="access-denied hidden">
+          <h2>Access Restricted</h2>
+          <p>Only Administrators and Reviewers may upload documents.</p>
+        </div>
+        <div id="upload-content" class="hidden">
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-body">
+              <div class="upload-zone" id="upload-zone"
+                onclick="document.getElementById('file-inp').click()"
+                ondragover="event.preventDefault();this.classList.add('drag')"
+                ondragleave="this.classList.remove('drag')"
+                ondrop="handleDrop(event)">
+                <div class="uz-icon">📄</div>
+                <div class="uz-title">Drop files here or click to browse</div>
+                <div class="uz-sub" style="margin-bottom:4px">Supported: PDF, PNG, JPG, DOCX · Max 10MB</div>
+                <div class="uz-sub" style="color:var(--txt3);font-size:12px">Invoices &amp; Credit Notes only</div>
+              </div>
+              <input type="file" id="file-inp" multiple accept=".pdf,.png,.jpg,.jpeg,.docx" style="display:none" onchange="handleFiles(this.files)">
+            </div>
+          </div>
+          <div id="upload-queue"></div>
+        </div>
+      </div>
+
+      <!-- DOCUMENTS -->
+      <div id="pg-documents" class="hidden">
+        <div class="card" style="margin-bottom:13px">
+          <div class="card-body" style="padding:13px 18px">
+            <div class="fbar">
+              <select class="fi fi-sm" id="df-type" onchange="renderDocs()" style="width:auto">
+                <option value="">All Types</option>
+                <option value="invoice">Invoice</option>
+                <option value="credit">Credit Note</option>
+              </select>
+              <select class="fi fi-sm" id="df-status" onchange="renderDocs()" style="width:auto">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <input class="fi fi-sm" type="text" id="df-vendor" placeholder="Filter vendor..." oninput="renderDocs()" style="width:160px">
+              <input class="fi fi-sm" type="date" id="df-from" onchange="renderDocs()" style="width:auto">
+              <input class="fi fi-sm" type="date" id="df-to" onchange="renderDocs()" style="width:auto">
+              <button class="btn btn-ol btn-sm" onclick="clearDocFilters()">Clear filters</button>
+              <span style="font-size:12px;color:var(--txt3);margin-left:auto" id="doc-count"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="tw">
+            <table>
+              <thead><tr><th>Invoice #</th><th>Type</th><th>Vendor</th><th>Date</th><th>Excl. VAT</th><th>VAT</th><th>Total</th><th>Status</th><th>Workflow</th><th>Flags</th><th></th></tr></thead>
+              <tbody id="doc-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORKFLOW -->
+      <div id="pg-workflow" class="hidden">
+        <div id="wf-denied" class="access-denied hidden">
+          <h2>Access Restricted</h2><p>Viewers do not have access to the approval workflow.</p>
+        </div>
+        <div id="wf-content">
+          <div class="sgrid" style="grid-template-columns:repeat(3,1fr)" id="wf-stats"></div>
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-title" id="wf-queue-title">Your Approval Queue</div>
+              <span class="badge b-invoice" id="wf-count-badge">0 documents</span>
+            </div>
+            <div id="wf-empty" class="empty-state hidden">
+              <div class="es-icon">✅</div>
+              <h3>Queue is clear</h3>
+              <p>No documents awaiting your approval at this time.</p>
+            </div>
+            <div class="tw">
+              <table>
+                <thead><tr><th>Invoice #</th><th>Type</th><th>Vendor</th><th>Amount</th><th>Current Step</th><th>Flag</th><th></th></tr></thead>
+                <tbody id="wf-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div id="pg-reports" class="hidden">
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-hd"><div class="card-title">Report Filters</div></div>
+          <div class="card-body">
+            <div class="fbar">
+              <select class="fi fi-sm" id="rf-type" onchange="renderReport()" style="width:auto">
+                <option value="spend">Spend Summary</option>
+                <option value="vendor">Vendor Analysis</option>
+                <option value="status">Approval Status</option>
+                <option value="vat">Tax / VAT Report</option>
+              </select>
+              <input class="fi fi-sm" type="date" id="rf-from" onchange="renderReport()" style="width:auto">
+              <input class="fi fi-sm" type="date" id="rf-to" onchange="renderReport()" style="width:auto">
+              <input class="fi fi-sm" type="text" id="rf-vendor" placeholder="Vendor name..." oninput="renderReport()" style="width:160px">
+              <select class="fi fi-sm" id="rf-status" onchange="renderReport()" style="width:auto">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <button class="btn btn-ol btn-sm" onclick="exportRpt('PDF')">📥 Export PDF</button>
+              <button class="btn btn-ol btn-sm" onclick="exportRpt('Excel')">📊 Export Excel</button>
+            </div>
+          </div>
+        </div>
+        <div id="report-out"></div>
+      </div>
+
+      <!-- AI INSIGHTS -->
+      <div id="pg-insights" class="hidden">
+        <div class="sgrid" id="ins-stats"></div>
+        <div id="ins-content"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="mo hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="mo-hd">
+      <div class="mo-title" id="mo-title">Document</div>
+      <button class="mo-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mo-body" id="mo-body"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+// ================================================================
+// DATA & STATE
+// ================================================================
+const USERS = {
+  'admin@docflow.co.za':    { pass:'Admin@123',   role:'admin',    name:'Admin User',    init:'AU' },
+  'reviewer@docflow.co.za': { pass:'Review@123',  role:'reviewer', name:'Alice Khumalo', init:'AK' },
+  'manager@docflow.co.za':  { pass:'Manage@123',  role:'manager',  name:'Sipho Dlamini', init:'SD' },
+  'finance@docflow.co.za':  { pass:'Finance@123', role:'finance',  name:'Priya Naidoo',  init:'PN' },
+  'viewer@docflow.co.za':   { pass:'View@123',    role:'viewer',   name:'Ethan Botha',   init:'EB' },
+};
+const ROLE_LABELS = { admin:'Administrator', reviewer:'Reviewer', manager:'Manager', finance:'Finance', viewer:'Viewer' };
+
+let currentUser = null;
+let docs = [];
+let nextId = 1;
+// Safe map: uid -> filename (never injected into onclick attributes)
+const pendingFiles = {};
+
+// ================================================================
+// UTILS
+// ================================================================
+function fmtD(d){ return d.toISOString().split('T')[0]; }
+function fmtA(n){ return 'R\u00A0' + Number(n).toLocaleString('en-ZA', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fmtS(n){ if(n>=1e6) return 'R'+(n/1e6).toFixed(1)+'M'; if(n>=1000) return 'R'+(n/1000).toFixed(0)+'K'; return 'R'+Math.round(n); }
+function cap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : ''; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function showToast(msg, type='info'){
+  const wrap = document.getElementById('toast-wrap');
+  const div = document.createElement('div');
+  div.className = 'toast t-' + (type==='ok'?'ok':type==='err'?'err':'info');
+  div.textContent = msg;
+  wrap.appendChild(div);
+  setTimeout(() => div.remove(), 3500);
+}
+
+// ================================================================
+// AUTH
+// ================================================================
+function doLogin(){
+  const email = document.getElementById('l-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('l-pass').value;
+  const role  = document.getElementById('l-role').value;
+  const u = USERS[email];
+  const errEl = document.getElementById('lerr');
+  if (!u || u.pass !== pass){
+    errEl.textContent = 'Invalid email or password. Please check your credentials.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  errEl.classList.add('hidden');
+  currentUser = { email, role, name: u.name, init: u.init };
+  document.getElementById('login-screen').classList.add('hidden');
+  const shell = document.getElementById('app-shell');
+  shell.classList.remove('hidden');
+  document.getElementById('sb-av').textContent   = u.init;
+  document.getElementById('sb-name').textContent = u.name;
+  document.getElementById('sb-role').textContent = ROLE_LABELS[role];
+  document.getElementById('tb-username').textContent = u.name;
+  document.getElementById('tb-role-badge').textContent = ROLE_LABELS[role];
+  showPage('dashboard');
+}
+
+function doLogout(){
+  currentUser = null;
+  docs = [];
+  nextId = 1;
+  Object.keys(pendingFiles).forEach(k => delete pendingFiles[k]);
+  document.getElementById('upload-queue').innerHTML = '';
+  document.getElementById('l-email').value = '';
+  document.getElementById('l-pass').value  = '';
+  document.getElementById('lerr').classList.add('hidden');
+  document.getElementById('app-shell').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+const PAGE_TITLES = {
+  dashboard:'Dashboard', upload:'Upload Documents', documents:'Document Library',
+  workflow:'Approval Workflow', reports:'Reports', insights:'AI Insights'
+};
+const PAGES = ['dashboard','upload','documents','workflow','reports','insights'];
+
+function showPage(name){
+  PAGES.forEach(p => {
+    document.getElementById('pg-'+p).classList.add('hidden');
+    document.getElementById('ni-'+p).classList.remove('active');
+  });
+  document.getElementById('pg-'+name).classList.remove('hidden');
+  document.getElementById('ni-'+name).classList.add('active');
+  document.getElementById('tb-title').textContent = PAGE_TITLES[name];
+  updateWFBadge();
+  if (name==='dashboard')  renderDashboard();
+  if (name==='upload')     renderUploadPage();
+  if (name==='documents')  renderDocs();
+  if (name==='workflow')   renderWorkflow();
+  if (name==='reports')    renderReport();
+  if (name==='insights')   renderInsights();
+}
+
+function updateWFBadge(){
+  const q = getMyQueue();
+  const b = document.getElementById('wf-badge');
+  if (q.length > 0){ b.textContent = q.length; b.classList.remove('hidden'); }
+  else { b.classList.add('hidden'); }
+}
+
+// ================================================================
+// DASHBOARD
+// ================================================================
+function getStats(){
+  const approved = docs.filter(d => d.status==='approved');
+  const spend = approved.filter(d => d.type==='invoice').reduce((s,d) => s+d.total, 0);
+  return {
+    total:    docs.length,
+    pending:  docs.filter(d => d.status==='pending').length,
+    approved: approved.length,
+    rejected: docs.filter(d => d.status==='rejected').length,
+    dupes:    docs.filter(d => d.isDuplicate).length,
+    spend
+  };
+}
+
+function renderDashboard(){
+  const s = getStats();
+  document.getElementById('dash-stats').innerHTML =
+    sc('TOTAL DOCUMENTS',  s.total,    'c-blue',  'All uploaded') +
+    sc('PENDING APPROVAL', s.pending,  'c-amber', 'Awaiting action') +
+    sc('FULLY APPROVED',   s.approved, 'c-green', 'All 3 steps done') +
+    sc('REJECTED',         s.rejected, 'c-red',   'Needs attention') +
+    sc('DUPLICATES',       s.dupes,    'c-red',   'Flagged') +
+    `<div class="sc"><div class="sc-lbl">APPROVED SPEND</div><div class="sc-val c-acc" style="font-size:20px">${fmtS(s.spend)}</div><div class="sc-sub">Invoices only</div></div>`;
+
+  const rows = docs.slice(0,7).map(d =>
+    `<tr style="cursor:pointer" onclick="openModal(${d.id})">
+      <td style="font-family:monospace;font-size:11px">${esc(d.invNum)}</td>
+      <td>${typeBadge(d.type)}</td>
+      <td>${esc(d.vendor)}</td>
+      <td>${fmtA(d.total)}</td>
+      <td>${statusBadge(d.status)}</td>
+      <td>${d.date}</td>
+    </tr>`
+  ).join('');
+
+  document.getElementById('dash-tbody').innerHTML = rows ||
+    `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--txt3)">
+      No documents yet. <span class="link" onclick="showPage('upload')">Upload your first document →</span>
+    </td></tr>`;
+}
+
+function sc(label, val, cls, sub){
+  return `<div class="sc"><div class="sc-lbl">${label}</div><div class="sc-val ${cls}">${val}</div><div class="sc-sub">${sub}</div></div>`;
+}
+
+// ================================================================
+// UPLOAD
+// ================================================================
+function renderUploadPage(){
+  const can = ['admin','reviewer'].includes(currentUser.role);
+  document.getElementById('upload-denied').classList.toggle('hidden', can);
+  document.getElementById('upload-content').classList.toggle('hidden', !can);
+}
+
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.remove('drag');
+  if (!['admin','reviewer'].includes(currentUser.role)){ showToast('Access denied','err'); return; }
+  processFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files){
+  if (!['admin','reviewer'].includes(currentUser.role)){ showToast('Access denied','err'); return; }
+  processFiles(files);
+  // Reset input so same file can be re-selected if needed
+  document.getElementById('file-inp').value = '';
+}
+
+function processFiles(files){
+  Array.from(files).forEach(f => {
+    if (f.size > 10*1024*1024){ showToast('File too large (max 10MB): ' + f.name, 'err'); return; }
+    // uid contains only safe alphanumeric chars - safe for onclick
+    const uid = 'uid' + Date.now() + Math.floor(Math.random()*9999);
+    pendingFiles[uid] = f.name;
+
+    const div = document.createElement('div');
+    div.className = 'uitem';
+    div.id = uid;
+    div.innerHTML =
+      `<div class="uitem-hd">
+        <span style="font-size:22px">📄</span>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--txt)">${esc(f.name)}</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:2px" id="${uid}-status">Uploading...</div>
+        </div>
+      </div>
+      <div class="uprog"><div class="uprog-fill" id="${uid}-prog" style="width:0%"></div></div>`;
+    document.getElementById('upload-queue').prepend(div);
+
+    let p = 0;
+    const tick = setInterval(() => {
+      p += Math.random()*18 + 5;
+      p = Math.min(p, 100);
+      const progEl = document.getElementById(uid+'-prog');
+      const statEl = document.getElementById(uid+'-status');
+      if (progEl) progEl.style.width = p + '%';
+      if (statEl) statEl.textContent = p < 40 ? 'Uploading...' : p < 80 ? 'AI extracting data...' : 'Running duplicate check...';
+      if (p >= 100){ clearInterval(tick); showUploadForm(uid); }
+    }, 160);
+  });
+}
+
+function showUploadForm(uid){
+  const fileName = pendingFiles[uid] || 'document.pdf';
+  const nameL = fileName.toLowerCase();
+  const isC = nameL.includes('credit') || nameL.includes('cn-') || nameL.includes('cn_');
+  const today = fmtD(new Date());
+  const sugNum = isC
+    ? 'CN-' + String(6000+nextId).padStart(6,'0')
+    : 'INV-' + String(2024000+nextId).padStart(7,'0');
+
+  const div = document.getElementById(uid);
+  if (!div) return;
+  div.innerHTML =
+    `<div class="uitem-hd">
+      <span style="font-size:22px">🔍</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--txt)">${esc(fileName)}</div>
+        <div style="font-size:11px;color:var(--green);margin-top:2px">✓ File received — complete the details below and submit</div>
+      </div>
+      <span class="badge ${isC?'b-credit':'b-invoice'}">${isC?'Credit Note':'Invoice'}</span>
+    </div>
+    <div class="uf-grid">
+      <div class="fg" style="margin:0">
+        <label class="fl">INVOICE / CN NUMBER *</label>
+        <input class="fi fi-sm" id="${uid}-inv" value="${esc(sugNum)}" placeholder="INV-0000001">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">VENDOR NAME *</label>
+        <input class="fi fi-sm" id="${uid}-ven" placeholder="e.g. Acme Supplies (Pty) Ltd">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">DOCUMENT DATE *</label>
+        <input class="fi fi-sm" type="date" id="${uid}-date" value="${today}">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">AMOUNT EXCL. VAT *</label>
+        <input class="fi fi-sm" type="number" id="${uid}-amt" placeholder="0.00" step="0.01" min="0.01" oninput="calcVat('${uid}')">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">VAT 15% (auto-calculated)</label>
+        <input class="fi fi-sm" type="number" id="${uid}-vat" placeholder="0.00" readonly style="background:var(--surf2);color:var(--txt3)">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">TOTAL INCL. VAT (auto)</label>
+        <input class="fi fi-sm" type="number" id="${uid}-total" placeholder="0.00" readonly style="background:var(--surf2);color:var(--txt3)">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="fl">DOCUMENT TYPE</label>
+        <select class="fi fi-sm" id="${uid}-type">
+          <option value="invoice"${!isC?' selected':''}>Invoice</option>
+          <option value="credit"${isC?' selected':''}>Credit Note</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--bdr)">
+      <button class="btn btn-ol btn-sm" onclick="cancelUpload('${uid}')">Cancel</button>
+      <button class="btn btn-fill btn-sm" onclick="submitDoc('${uid}')">Submit for Approval →</button>
+    </div>`;
+}
+
+function calcVat(uid){
+  const amt = parseFloat(document.getElementById(uid+'-amt').value) || 0;
+  const vat = Math.round(amt * 0.15 * 100) / 100;
+  const total = Math.round((amt + vat) * 100) / 100;
+  const vatEl = document.getElementById(uid+'-vat');
+  const totEl = document.getElementById(uid+'-total');
+  if (vatEl) vatEl.value = vat.toFixed(2);
+  if (totEl) totEl.value = total.toFixed(2);
+}
+
+function cancelUpload(uid){
+  const el = document.getElementById(uid);
+  if (el) el.remove();
+  delete pendingFiles[uid];
+}
+
+function submitDoc(uid){
+  const fileName = pendingFiles[uid] || 'document.pdf';
+  const invNum = (document.getElementById(uid+'-inv').value || '').trim();
+  const vendor = (document.getElementById(uid+'-ven').value || '').trim();
+  const date   = document.getElementById(uid+'-date').value || fmtD(new Date());
+  const amt    = parseFloat(document.getElementById(uid+'-amt').value) || 0;
+  const type   = document.getElementById(uid+'-type').value;
+
+  // Validation
+  if (!invNum){ showToast('Please enter an invoice / CN number','err'); return; }
+  if (!vendor){ showToast('Please enter the vendor name','err'); return; }
+  if (amt <= 0){ showToast('Please enter a valid amount greater than zero','err'); return; }
+
+  const vat   = Math.round(amt * 0.15 * 100) / 100;
+  const total = Math.round((amt + vat) * 100) / 100;
+
+  // Duplicate detection: 1) exact invoice number, 2) same vendor + same amount
+  const dupeByNum = docs.find(d => d.invNum.toLowerCase() === invNum.toLowerCase());
+  const dupeByVA  = !dupeByNum && docs.find(d =>
+    d.vendor.toLowerCase() === vendor.toLowerCase() && Math.abs(d.amount - amt) < 0.02
+  );
+  const isDupe = !!(dupeByNum || dupeByVA);
+  const dupeOf = dupeByNum ? dupeByNum.invNum : dupeByVA ? dupeByVA.invNum : null;
+
+  docs.unshift({
+    id: nextId++, invNum, type, vendor, date,
+    amount: amt, vat, total,
+    status: 'pending', wsStep: 0,
+    steps: [
+      { role:'reviewer', status:'pending', actor:null, date:null, notes:'' },
+      { role:'manager',  status:'pending', actor:null, date:null, notes:'' },
+      { role:'finance',  status:'pending', actor:null, date:null, notes:'' },
+    ],
+    isDuplicate: isDupe, duplicateOf: dupeOf,
+    uploadedBy: currentUser.name, fileName, aiExtracted: true
+  });
+
+  delete pendingFiles[uid];
+
+  const div = document.getElementById(uid);
+  if (div){
+    div.innerHTML =
+      `<div class="uitem-hd">
+        <span style="font-size:22px">${isDupe?'⚠️':'✅'}</span>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--txt)">${esc(fileName)}</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:2px">${esc(vendor)} · ${esc(invNum)} · ${fmtA(total)}</div>
+        </div>
+        <span class="badge ${isDupe?'b-dupe':'b-approved'}">${isDupe?'DUPLICATE FLAGGED':'Submitted'}</span>
+      </div>
+      ${isDupe ? `<div class="alert alert-warn" style="margin-top:8px;margin-bottom:0">⚠ Duplicate detected — matches existing record <strong>${esc(dupeOf)}</strong>. Document flagged for review.</div>` : ''}`;
+  }
+
+  if (isDupe) showToast('⚠ Duplicate detected: ' + invNum, 'err');
+  else showToast('Document submitted for approval', 'ok');
+  updateWFBadge();
+}
+
+// ================================================================
+// DOCUMENTS
+// ================================================================
+function getFilteredDocs(){
+  const t  = (document.getElementById('df-type')?.value   || '');
+  const st = (document.getElementById('df-status')?.value || '');
+  const v  = (document.getElementById('df-vendor')?.value || '').toLowerCase().trim();
+  const fr = (document.getElementById('df-from')?.value   || '');
+  const to = (document.getElementById('df-to')?.value     || '');
+  return docs.filter(d => {
+    if (t  && d.type !== t) return false;
+    if (st && d.status !== st) return false;
+    if (v  && !d.vendor.toLowerCase().includes(v)) return false;
+    if (fr && d.date < fr) return false;
+    if (to && d.date > to) return false;
+    return true;
+  });
+}
+
+function renderDocs(){
+  const fd = getFilteredDocs();
+  const cntEl = document.getElementById('doc-count');
+  if (cntEl) cntEl.textContent = fd.length + ' result' + (fd.length!==1?'s':'');
+
+  const tbody = document.getElementById('doc-tbody');
+  if (!tbody) return;
+  if (!fd.length){
+    tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state"><div class="es-icon">📁</div><h3>No documents found</h3><p>${docs.length?'Try adjusting your filters.':'No documents uploaded yet.'}</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = fd.map(d => {
+    const wfBadge = d.status==='approved'
+      ? '<span class="badge b-approved">Complete</span>'
+      : d.status==='rejected'
+      ? '<span class="badge b-rejected">Rejected</span>'
+      : `<span class="badge b-s${d.wsStep+1}">Step ${d.wsStep+1}/3</span>`;
+    return `<tr style="cursor:pointer" onclick="openModal(${d.id})">
+      <td style="font-family:monospace;font-size:11px">${esc(d.invNum)}</td>
+      <td>${typeBadge(d.type)}</td>
+      <td>${esc(d.vendor)}</td>
+      <td>${d.date}</td>
+      <td>${fmtA(d.amount)}</td>
+      <td>${fmtA(d.vat)}</td>
+      <td style="font-weight:600">${fmtA(d.total)}</td>
+      <td>${statusBadge(d.status)}</td>
+      <td>${wfBadge}</td>
+      <td>${d.isDuplicate?'<span class="badge b-dupe">DUPE</span>':'—'}</td>
+      <td onclick="event.stopPropagation()"><button class="btn btn-ol btn-sm" onclick="openModal(${d.id})">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function clearDocFilters(){
+  ['df-type','df-status','df-vendor','df-from','df-to'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  renderDocs();
+}
+
+// ================================================================
+// MODAL
+// ================================================================
+function openModal(id){
+  const d = docs.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('mo-title').textContent = d.invNum;
+  const canAct = canApprove(d);
+  const stepLabels = ['Step 1: Review','Step 2: Manager','Step 3: Finance'];
+  const wfHtml = d.steps.map((s,i) => {
+    let cls = '';
+    if (s.status==='approved') cls='wf-done';
+    else if (s.status==='rejected') cls='wf-rej';
+    else if (d.wsStep===i && d.status==='pending') cls='wf-active';
+    const num = s.status==='approved' ? '✓' : s.status==='rejected' ? '✕' : (i+1);
+    return `<div class="wf-s ${cls}">
+      <div class="wf-num">${num}</div>
+      <div class="wf-st">${stepLabels[i]}</div>
+      <div class="wf-sr">${cap(s.status)}</div>
+      ${s.actor ? `<div class="wf-sa">${esc(s.actor)}</div>` : ''}
+      ${s.notes ? `<div class="wf-sa" style="font-style:italic">${esc(s.notes)}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('mo-body').innerHTML =
+    `<div class="dgrid" style="margin-bottom:16px">
+      <div class="di"><label>DOCUMENT TYPE</label><span>${typeBadge(d.type)}</span></div>
+      <div class="di"><label>STATUS</label><span>${statusBadge(d.status)}</span></div>
+      <div class="di"><label>VENDOR</label><span>${esc(d.vendor)}</span></div>
+      <div class="di"><label>DATE</label><span>${d.date}</span></div>
+      <div class="di"><label>AMOUNT EXCL. VAT</label><span>${fmtA(d.amount)}</span></div>
+      <div class="di"><label>VAT (15%)</label><span>${fmtA(d.vat)}</span></div>
+      <div class="di"><label>TOTAL INCL. VAT</label><span style="font-size:16px;color:var(--acc)">${fmtA(d.total)}</span></div>
+      <div class="di"><label>UPLOADED BY</label><span>${esc(d.uploadedBy)}</span></div>
+      <div class="di"><label>FILE NAME</label><span style="font-size:12px;color:var(--txt3)">${esc(d.fileName)}</span></div>
+      <div class="di"><label>AI EXTRACTED</label><span>${d.aiExtracted ? '✓ Yes' : '✗ No'}</span></div>
+    </div>
+    ${d.isDuplicate ? `<div class="alert alert-warn" style="margin-bottom:14px">⚠ <strong>Duplicate Detected</strong> — matches existing record <strong>${esc(d.duplicateOf)}</strong></div>` : ''}
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.5px;margin-bottom:9px">3-STEP APPROVAL WORKFLOW</div>
+      <div class="wf-track">${wfHtml}</div>
+    </div>
+    ${canAct
+      ? `<div class="fg"><label class="fl">APPROVAL NOTES (optional)</label>
+          <input class="fi" type="text" id="ap-notes" placeholder="Add notes for this decision..."></div>
+         <div style="display:flex;gap:9px;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--bdr)">
+           <button class="btn btn-r" onclick="takeAction(${d.id},'rejected')">✕ Reject</button>
+           <button class="btn btn-g" onclick="takeAction(${d.id},'approved')">✓ Approve</button>
+         </div>`
+      : `<div style="text-align:right;padding-top:12px;border-top:1px solid var(--bdr)">
+           <button class="btn btn-ol" onclick="closeModal()">Close</button>
+         </div>`
+    }`;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+function canApprove(d){
+  if (!currentUser || d.status !== 'pending') return false;
+  const stepRoles = ['reviewer','manager','finance'];
+  return currentUser.role === stepRoles[d.wsStep] || currentUser.role === 'admin';
+}
+
+function takeAction(id, action){
+  const d = docs.find(x => x.id === id);
+  if (!d) return;
+  const stepRoles = ['reviewer','manager','finance'];
+  const notes = (document.getElementById('ap-notes')?.value || '').trim();
+  d.steps[d.wsStep] = {
+    role: stepRoles[d.wsStep], status: action,
+    actor: currentUser.name, date: fmtD(new Date()), notes
+  };
+  if (action === 'rejected'){
+    d.status = 'rejected';
+  } else if (d.wsStep === 2){
+    d.status = 'approved';
+    d.wsStep = 3;
+  } else {
+    d.wsStep++;
+  }
+  closeModal();
+  showToast(action==='approved' ? 'Document approved ✓' : 'Document rejected', action==='approved'?'ok':'err');
+  updateWFBadge();
+  // Refresh whichever page is currently visible
+  if (!document.getElementById('pg-workflow').classList.contains('hidden')) renderWorkflow();
+  if (!document.getElementById('pg-documents').classList.contains('hidden')) renderDocs();
+  if (!document.getElementById('pg-dashboard').classList.contains('hidden')) renderDashboard();
+}
+
+// ================================================================
+// WORKFLOW
+// ================================================================
+function getMyQueue(){
+  if (!currentUser || currentUser.role==='viewer') return [];
+  const stepRoles = ['reviewer','manager','finance'];
+  const myStep = stepRoles.indexOf(currentUser.role);
+  if (currentUser.role === 'admin') return docs.filter(d => d.status==='pending');
+  if (myStep < 0) return [];
+  return docs.filter(d => d.status==='pending' && d.wsStep===myStep);
+}
+
+function renderWorkflow(){
+  if (!currentUser) return;
+  if (currentUser.role === 'viewer'){
+    document.getElementById('wf-denied').classList.remove('hidden');
+    document.getElementById('wf-content').classList.add('hidden');
+    return;
+  }
+  document.getElementById('wf-denied').classList.add('hidden');
+  document.getElementById('wf-content').classList.remove('hidden');
+
+  const s1 = docs.filter(d => d.status==='pending' && d.wsStep===0).length;
+  const s2 = docs.filter(d => d.status==='pending' && d.wsStep===1).length;
+  const s3 = docs.filter(d => d.status==='pending' && d.wsStep===2).length;
+  document.getElementById('wf-stats').innerHTML =
+    sc('STEP 1 · REVIEWER', s1, 'c-blue',   'Pending review') +
+    sc('STEP 2 · MANAGER',  s2, 'c-purple', 'Pending manager') +
+    sc('STEP 3 · FINANCE',  s3, 'c-teal',   'Pending finance');
+
+  const q = getMyQueue();
+  document.getElementById('wf-queue-title').textContent =
+    currentUser.role==='admin' ? 'All Pending Documents' : 'Your Approval Queue';
+  document.getElementById('wf-count-badge').textContent =
+    q.length + ' document' + (q.length!==1?'s':'');
+
+  const emptyEl = document.getElementById('wf-empty');
+  const tbody   = document.getElementById('wf-tbody');
+  if (!q.length){
+    emptyEl.classList.remove('hidden');
+    tbody.innerHTML = '';
+    return;
+  }
+  emptyEl.classList.add('hidden');
+  tbody.innerHTML = q.map(d =>
+    `<tr>
+      <td style="font-family:monospace;font-size:11px">${esc(d.invNum)}</td>
+      <td>${typeBadge(d.type)}</td>
+      <td>${esc(d.vendor)}</td>
+      <td>${fmtA(d.total)}</td>
+      <td><span class="badge b-s${d.wsStep+1}">Step ${d.wsStep+1}: ${['Reviewer','Manager','Finance'][d.wsStep]}</span></td>
+      <td>${d.isDuplicate ? '<span class="badge b-dupe">DUPE</span>' : '—'}</td>
+      <td><button class="btn btn-fill btn-sm" onclick="openModal(${d.id})">Review →</button></td>
+    </tr>`
+  ).join('');
+}
+
+// ================================================================
+// REPORTS
+// ================================================================
+function getRptDocs(){
+  const fr = (document.getElementById('rf-from')?.value   || '');
+  const to = (document.getElementById('rf-to')?.value     || '');
+  const v  = (document.getElementById('rf-vendor')?.value || '').toLowerCase().trim();
+  const st = (document.getElementById('rf-status')?.value || '');
+  return docs.filter(d => {
+    if (fr && d.date < fr) return false;
+    if (to && d.date > to) return false;
+    if (v  && !d.vendor.toLowerCase().includes(v)) return false;
+    if (st && d.status !== st) return false;
+    return true;
+  });
+}
+
+function renderReport(){
+  const type = document.getElementById('rf-type')?.value || 'spend';
+  const rd   = getRptDocs();
+  if (!rd.length){
+    document.getElementById('report-out').innerHTML =
+      `<div class="empty-state"><div class="es-icon">📊</div><h3>No data for these filters</h3><p>Adjust the filters above or upload documents first.</p></div>`;
+    return;
+  }
+  const totalIncl = rd.reduce((s,d) => s+d.total,  0);
+  const totalExcl = rd.reduce((s,d) => s+d.amount, 0);
+  const totalVat  = rd.reduce((s,d) => s+d.vat,    0);
+  let html = '';
+
+  if (type === 'spend'){
+    const invT = rd.filter(d=>d.type==='invoice').reduce((s,d)=>s+d.total,0);
+    const crT  = rd.filter(d=>d.type==='credit').reduce((s,d)=>s+d.total,0);
+    html =
+      `<div class="rmc">
+        ${rmc('TOTAL DOCS', rd.length, 'c-blue')}
+        ${rmc('INVOICES', fmtS(invT), 'c-purple')}
+        ${rmc('CREDIT NOTES', fmtS(crT), 'c-green')}
+        ${rmc('NET SPEND', fmtS(invT-crT), 'c-acc')}
+      </div>
+      <div class="card"><div class="card-hd"><div class="card-title">Spend Summary</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>Invoice #</th><th>Type</th><th>Vendor</th><th>Date</th><th>Excl. VAT</th><th>VAT</th><th>Total</th><th>Status</th>
+      </tr></thead><tbody>
+        ${rd.map(d=>`<tr style="cursor:pointer" onclick="openModal(${d.id})">
+          <td style="font-family:monospace;font-size:11px">${esc(d.invNum)}</td>
+          <td>${typeBadge(d.type)}</td>
+          <td>${esc(d.vendor)}</td><td>${d.date}</td>
+          <td>${fmtA(d.amount)}</td><td>${fmtA(d.vat)}</td>
+          <td style="font-weight:600">${fmtA(d.total)}</td>
+          <td>${statusBadge(d.status)}</td>
+        </tr>`).join('')}
+      </tbody></table></div></div>`;
+
+  } else if (type === 'vendor'){
+    const map = {};
+    rd.forEach(d => {
+      if (!map[d.vendor]) map[d.vendor] = {v:d.vendor,c:0,t:0,vat:0};
+      map[d.vendor].c++; map[d.vendor].t+=d.total; map[d.vendor].vat+=d.vat;
+    });
+    const rows = Object.values(map).sort((a,b)=>b.t-a.t);
+    const maxT = rows[0]?.t || 1;
+    html =
+      `<div class="card" style="margin-bottom:14px">
+        <div class="card-hd"><div class="card-title">Spend by Vendor</div></div>
+        <div class="card-body">
+          <div class="bar-chart">
+            ${rows.map(r=>`<div class="bar-row">
+              <div class="bar-lbl" title="${esc(r.v)}">${esc(r.v)}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${(r.t/maxT*100).toFixed(1)}%;background:var(--blue)"></div></div>
+              <div class="bar-val">${fmtS(r.t)}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="card"><div class="card-hd"><div class="card-title">Vendor Detail</div></div>
+      <div class="tw"><table><thead><tr><th>Vendor</th><th>Documents</th><th>Total Incl. VAT</th><th>Total VAT</th></tr></thead><tbody>
+        ${rows.map(r=>`<tr><td>${esc(r.v)}</td><td>${r.c}</td><td style="font-weight:600">${fmtA(r.t)}</td><td>${fmtA(r.vat)}</td></tr>`).join('')}
+      </tbody></table></div></div>`;
+
+  } else if (type === 'status'){
+    const pen = rd.filter(d=>d.status==='pending').length;
+    const app = rd.filter(d=>d.status==='approved').length;
+    const rej = rd.filter(d=>d.status==='rejected').length;
+    const tot = rd.length || 1;
+    html =
+      `<div class="rmc">
+        ${rmc('PENDING',  pen, 'c-amber')}
+        ${rmc('APPROVED', app, 'c-green')}
+        ${rmc('REJECTED', rej, 'c-red')}
+      </div>
+      <div class="card"><div class="card-body"><div class="bar-chart">
+        <div class="bar-row"><div class="bar-lbl">Pending</div><div class="bar-track"><div class="bar-fill" style="width:${(pen/tot*100).toFixed(1)}%;background:var(--amber)"></div></div><div class="bar-val">${pen} docs</div></div>
+        <div class="bar-row"><div class="bar-lbl">Approved</div><div class="bar-track"><div class="bar-fill" style="width:${(app/tot*100).toFixed(1)}%;background:var(--green)"></div></div><div class="bar-val">${app} docs</div></div>
+        <div class="bar-row"><div class="bar-lbl">Rejected</div><div class="bar-track"><div class="bar-fill" style="width:${(rej/tot*100).toFixed(1)}%;background:var(--red)"></div></div><div class="bar-val">${rej} docs</div></div>
+      </div></div></div>`;
+
+  } else if (type === 'vat'){
+    html =
+      `<div class="rmc">
+        ${rmc('EXCL. VAT',      fmtS(totalExcl), 'c-blue')}
+        ${rmc('TOTAL VAT (15%)',fmtS(totalVat),  'c-amber')}
+        ${rmc('INCL. VAT',      fmtS(totalIncl), 'c-acc')}
+      </div>
+      <div class="card"><div class="card-hd"><div class="card-title">VAT / Tax Breakdown</div></div>
+      <div class="tw"><table><thead><tr>
+        <th>Invoice #</th><th>Vendor</th><th>Date</th><th>Excl. VAT</th><th>VAT (15%)</th><th>Incl. VAT</th><th>Status</th>
+      </tr></thead><tbody>
+        ${rd.map(d=>`<tr style="cursor:pointer" onclick="openModal(${d.id})">
+          <td style="font-family:monospace;font-size:11px">${esc(d.invNum)}</td>
+          <td>${esc(d.vendor)}</td><td>${d.date}</td>
+          <td>${fmtA(d.amount)}</td>
+          <td style="color:var(--amber);font-weight:600">${fmtA(d.vat)}</td>
+          <td style="font-weight:600">${fmtA(d.total)}</td>
+          <td>${statusBadge(d.status)}</td>
+        </tr>`).join('')}
+      </tbody></table></div></div>`;
+  }
+  document.getElementById('report-out').innerHTML = html;
+}
+
+function exportRpt(fmt){
+  showToast(fmt + ' export initiated — file downloading...', 'info');
+}
+
+function rmc(label, val, cls){
+  return `<div class="rmc-card"><div class="rmc-lbl">${label}</div><div class="rmc-val ${cls}">${val}</div></div>`;
+}
+
+// ================================================================
+// AI INSIGHTS
+// ================================================================
+function renderInsights(){
+  const approved = docs.filter(d => d.status==='approved');
+  const pending  = docs.filter(d => d.status==='pending');
+  const dupes    = docs.filter(d => d.isDuplicate);
+
+  if (!docs.length){
+    document.getElementById('ins-stats').innerHTML = '';
+    document.getElementById('ins-content').innerHTML =
+      `<div class="empty-state"><div class="es-icon">🤖</div><h3>No data to analyse yet</h3>
+      <p>Upload documents and process them through the approval workflow.<br>AI insights will appear here automatically.</p></div>`;
+    return;
+  }
+
+  const invT     = approved.filter(d=>d.type==='invoice').reduce((s,d)=>s+d.total,0);
+  const crT      = approved.filter(d=>d.type==='credit').reduce((s,d)=>s+d.total,0);
+  const dupeRisk = dupes.reduce((s,d)=>s+d.total,0);
+  const highVal  = docs.filter(d=>d.amount>20000);
+  const appRate  = (approved.length/docs.length*100).toFixed(1);
+  const dupeRate = (dupes.length/docs.length*100).toFixed(1);
+  const avgInv   = approved.length ? invT/approved.length : 0;
+  const map = {};
+  docs.forEach(d => { if(!map[d.vendor]) map[d.vendor]=0; map[d.vendor]+=d.total; });
+  const topV = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxV = topV[0]?.[1] || 1;
+
+  document.getElementById('ins-stats').innerHTML =
+    sc('APPROVAL RATE',    appRate+'%',       'c-green', '') +
+    sc('DUPLICATE RATE',   dupeRate+'%',      'c-red',   '') +
+    sc('AVG INVOICE VALUE',fmtS(avgInv),      'c-blue',  'Approved only') +
+    sc('HIGH-VALUE DOCS',  highVal.length,    'c-amber', '>R20,000');
+
+  document.getElementById('ins-content').innerHTML =
+    `<div class="ins-card">
+      <div class="ins-hd"><span class="ins-ic">📈</span><div class="ins-title">Spending Trends</div><span class="ins-tag tag-trend">TREND</span></div>
+      <div class="ai-blk"><div class="ai-lbl">✦ AI ANALYSIS</div><div class="ai-txt">
+        Total approved invoice spend is <strong>${fmtA(invT)}</strong>.
+        Credit notes reduce gross spend by <strong>${fmtA(crT)}</strong>, giving a net position of <strong>${fmtA(invT-crT)}</strong>.
+        ${highVal.length > 0 ? highVal.length+' document(s) exceed R20,000 — enhanced scrutiny is recommended.' : 'All documents are within normal value thresholds.'}
+      </div></div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-hd"><span class="ins-ic">⚠️</span><div class="ins-title">Anomalies &amp; Duplicate Risk</div><span class="ins-tag tag-anom">ANOMALY</span></div>
+      <div class="ai-blk"><div class="ai-lbl">✦ AI ANALYSIS</div><div class="ai-txt">
+        ${dupes.length
+          ? `<strong>${dupes.length} duplicate(s) detected, representing a potential overpayment risk of ${fmtA(dupeRisk)}. Immediate review is recommended.</strong> `
+          : 'No duplicates detected — submission process appears clean. '}
+        Duplicate rate of ${dupeRate}% is ${parseFloat(dupeRate)>5?'elevated — review submission controls.':'within acceptable thresholds.'}
+        ${pending.length} document(s) are pending — ${pending.length>5?'a bottleneck may be forming.':'workflow is flowing normally.'}
+      </div></div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-hd"><span class="ins-ic">🏢</span><div class="ins-title">Top Vendors by Spend</div><span class="ins-tag tag-risk">VENDOR RISK</span></div>
+      <div class="bar-chart" style="margin-bottom:14px">
+        ${topV.map(([v,val]) =>
+          `<div class="bar-row">
+            <div class="bar-lbl" title="${esc(v)}">${esc(v)}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(val/maxV*100).toFixed(1)}%;background:var(--acc)"></div></div>
+            <div class="bar-val">${fmtS(val)}</div>
+          </div>`
+        ).join('')}
+      </div>
+      <div class="ai-blk"><div class="ai-lbl">✦ AI RECOMMENDATION</div><div class="ai-txt">
+        ${topV.length
+          ? `Top vendor is <strong>${esc(topV[0][0])}</strong> at ${fmtA(topV[0][1])}.
+             ${topV[0][1]/(invT||1) > 0.3
+               ? 'This represents significant concentration risk — consider supplier diversification.'
+               : 'Spend is reasonably distributed across vendors.'}
+             Consider negotiating volume discounts with your top 3 vendors.`
+          : 'No vendor data available yet.'}
+      </div></div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-hd"><span class="ins-ic">⚙️</span><div class="ins-title">Workflow Efficiency</div><span class="ins-tag tag-eff">EFFICIENCY</span></div>
+      <div class="ai-blk"><div class="ai-lbl">✦ AI ANALYSIS</div><div class="ai-txt">
+        The 3-step workflow is operating at a <strong>${appRate}% approval rate</strong>.
+        ${parseFloat(appRate)<50
+          ? 'A low approval rate may indicate poor document quality at intake — consider revising submission guidelines.'
+          : parseFloat(appRate)>90
+          ? 'A high approval rate signals excellent pre-screening and quality intake processes.'
+          : 'The approval rate reflects a healthy balance of scrutiny and throughput.'}
+        <strong>Recommendation:</strong> Consider auto-fast-tracking documents under R5,000 from verified vendors to reduce overhead by an estimated 30%.
+      </div></div>
+    </div>`;
+}
+
+// ================================================================
+// BADGE HELPERS
+// ================================================================
+function typeBadge(type){
+  return type==='invoice'
+    ? '<span class="badge b-invoice">Invoice</span>'
+    : '<span class="badge b-credit">Credit Note</span>';
+}
+function statusBadge(status){
+  return `<span class="badge b-${status}">${cap(status)}</span>`;
+}
+</script>
+</body>
+</html>
